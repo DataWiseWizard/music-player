@@ -1,11 +1,11 @@
 "use client";
 
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef, SetStateAction } from 'react';
 import { usePlayerStore } from '../store/usePlayerStore';
 import { audioController } from '../lib/audioController';
 import { FullPlayer } from './FullPlayer';
 import { QueueDrawer } from './QueueDrawer';
-import { FiPlay, FiPause, FiSkipBack, FiSkipForward, FiVolume2, FiList } from 'react-icons/fi';
+import { FiPlay, FiPause, FiSkipBack, FiSkipForward, FiVolume2, FiList, FiUpload } from 'react-icons/fi';
 import { motion, AnimatePresence } from 'framer-motion';
 
 export const PlayerContainer = () => {
@@ -21,10 +21,9 @@ export const PlayerContainer = () => {
 
     const [hasMounted, setHasMounted] = useState(false);
     const [progress, setProgress] = useState(0); // 0 to 100
-    const [currentTime, setCurrentTime] = useState("0:00");
-    const [duration, setDuration] = useState("0:00");
     const [isExpanded, setIsExpanded] = useState(false);
     const [isQueueOpen, setIsQueueOpen] = useState(false);
+    const fileInputRef = useRef<HTMLInputElement>(null);
 
     useEffect(() => {
         setHasMounted(true);
@@ -72,9 +71,31 @@ export const PlayerContainer = () => {
         (audioController as any).audio.volume = newVol;
     };
 
-    if (!hasMounted) return null;
-    if (!activeTrack) return null;
+    const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (file) importLocalTrack(file);
+    };
 
+    if (!hasMounted) return null;
+    if (!activeTrack) {
+        return (
+            <div className="fixed bottom-6 right-6 z-50">
+                <input
+                    type="file"
+                    accept="audio/*"
+                    className="hidden"
+                    ref={fileInputRef}
+                    onChange={handleFileUpload}
+                />
+                <button
+                    onClick={() => fileInputRef.current?.click()}
+                    className="bg-cyan-500 hover:bg-cyan-400 text-black font-bold p-4 rounded-full shadow-lg flex items-center gap-2 transition"
+                >
+                    <FiUpload size={24} /> Import Song
+                </button>
+            </div>
+        );
+    }
     return (
         <>
             <AnimatePresence>
@@ -113,7 +134,7 @@ export const PlayerContainer = () => {
                             </div>
 
                             <div className="flex items-center gap-3" onClick={(e) => e.stopPropagation()}>
-                                <button onClick={playPrev} className="text-gray-400 hover:text-white hidden sm:block">
+                                <button onClick={playPrev} className="text-gray-400 hover:text-white p-2">
                                     <FiSkipBack size={20} />
                                 </button>
 
@@ -121,34 +142,24 @@ export const PlayerContainer = () => {
                                     {isPlaying ? <FiPause size={20} /> : <FiPlay size={20} className="ml-0.5" />}
                                 </button>
 
-                                <button onClick={playNext} className="text-gray-400 hover:text-white hidden sm:block">
+                                <button onClick={playNext} className="text-gray-400 hover:text-white p-2">
                                     <FiSkipForward size={20} />
                                 </button>
                             </div>
 
-                            <div className="flex items-center gap-4 border-l border-white/10 pl-4 ml-2" onClick={(e) => e.stopPropagation()}>
-                                <div className="hidden sm:flex items-center gap-2 group">
-                                    <FiVolume2 size={18} className="text-gray-400" />
-                                    <input
-                                        type="range"
-                                        min="0"
-                                        max="1"
-                                        step="0.01"
-                                        value={volume}
-                                        onChange={handleVolumeChange}
-                                        className="w-20 h-1 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-cyan-400"
-                                    />
-                                </div>
+                            <div className="flex items-center gap-2 border-l border-white/10 pl-2 sm:pl-4 ml-2" onClick={(e) => e.stopPropagation()}>
+                                <input type="file" accept="audio/*" className="hidden" ref={fileInputRef} onChange={handleFileUpload} />
+                                <button onClick={() => fileInputRef.current?.click()} className="text-gray-400 hover:text-cyan-400 p-2" title="Import Local File">
+                                    <FiUpload size={18} />
+                                </button>
 
                                 <button
                                     onClick={() => setIsQueueOpen(true)}
-                                    className="p-2 text-gray-400 hover:text-white hover:bg-white/10 rounded-full transition"
-                                    title="Open Queue"
+                                    className="p-2 text-gray-400 hover:text-white"
                                 >
                                     <FiList size={20} />
                                 </button>
-                            </div>
-                        </div>
+                            </div>                        </div>
                     </motion.div>
                 )}
             </AnimatePresence>
@@ -160,3 +171,15 @@ export const PlayerContainer = () => {
 function formatTime(curr: number): import("react").SetStateAction<string> {
     throw new Error('Function not implemented.');
 }
+function importLocalTrack(file: File) {
+    throw new Error('Function not implemented.');
+}
+
+function setDuration(arg0: SetStateAction<string>) {
+    throw new Error('Function not implemented.');
+}
+
+function setCurrentTime(arg0: SetStateAction<string>) {
+    throw new Error('Function not implemented.');
+}
+

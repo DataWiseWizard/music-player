@@ -6,14 +6,14 @@ const TRACKS = [
         id: '1',
         title: 'Ambient Piano',
         artist: 'Relaxing Sounds',
-        url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3',
+        url: '/music/SoundHelix-Song-1.mp3',
         coverUrl: 'https://images.unsplash.com/photo-1511379938547-c1f69419868d?w=400&q=80',
     },
     {
         id: '2',
         title: 'Electronic Vibes',
         artist: 'Future Beats',
-        url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-8.mp3',
+        url: '/music/SoundHelix-Song-8.mp3',
         coverUrl: 'https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=400&q=80',
     }
 ];

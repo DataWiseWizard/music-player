@@ -4,10 +4,8 @@ import { useEffect, useState, useRef } from 'react';
 import { usePlayerStore } from '../store/usePlayerStore';
 import { audioController } from '../lib/audioController';
 import { FullPlayer } from './FullPlayer';
-import { FiList } from 'react-icons/fi';
 import { QueueDrawer } from './QueueDrawer';
-import { Visualizer } from './Visualizer';
-import { FiPlay, FiPause, FiSkipBack, FiSkipForward, FiVolume2 } from 'react-icons/fi';
+import { FiPlay, FiPause, FiSkipBack, FiSkipForward, FiVolume2, FiList } from 'react-icons/fi';
 import { motion, AnimatePresence } from 'framer-motion';
 
 export const PlayerContainer = () => {
@@ -91,7 +89,14 @@ export const PlayerContainer = () => {
                         animate={{ y: 0 }}
                         exit={{ y: 100 }}
                     >
-                        <div className="mx-auto max-w-5xl bg-slate-900/90 backdrop-blur-md border border-white/10 rounded-xl shadow-2xl overflow-hidden flex items-center p-3 pr-6 gap-4">
+                        <div className="mx-auto max-w-5xl bg-slate-900/90 backdrop-blur-md border border-white/10 rounded-xl shadow-2xl overflow-hidden flex items-center p-3 pr-6 gap-4 relative">
+                            <div className="absolute bottom-0 left-0 right-0 h-1 bg-white/5">
+                                <div
+                                    className="h-full bg-cyan-400"
+                                    style={{ width: `${progress}%` }}
+                                />
+                            </div>
+
                             <motion.img
                                 layoutId="album-art"
                                 src={activeTrack.coverUrl}
@@ -99,14 +104,42 @@ export const PlayerContainer = () => {
                             />
 
                             <div className="flex-1 overflow-hidden">
-                                <motion.h3 layoutId="track-title" className="font-bold text-white truncate text-sm">{activeTrack.title}</motion.h3>
-                                <motion.p layoutId="track-artist" className="text-xs text-gray-400 truncate">{activeTrack.artist}</motion.p>
+                                <motion.h3 layoutId="track-title" className="font-bold text-white truncate text-sm">
+                                    {activeTrack.title}
+                                </motion.h3>
+                                <motion.p layoutId="track-artist" className="text-xs text-gray-400 truncate">
+                                    {activeTrack.artist}
+                                </motion.p>
                             </div>
 
-                            <div className="flex items-center gap-4" onClick={(e) => e.stopPropagation()}>
-                                <button onClick={togglePlay} className="w-10 h-10 bg-white text-black rounded-full flex items-center justify-center">
-                                    {isPlaying ? <FiPause size={20} /> : <FiPlay size={20} ml-1 />}
+                            <div className="flex items-center gap-3" onClick={(e) => e.stopPropagation()}>
+                                <button onClick={playPrev} className="text-gray-400 hover:text-white hidden sm:block">
+                                    <FiSkipBack size={20} />
                                 </button>
+
+                                <button onClick={togglePlay} className="w-10 h-10 bg-white text-black rounded-full flex items-center justify-center hover:scale-105 transition">
+                                    {isPlaying ? <FiPause size={20} /> : <FiPlay size={20} className="ml-0.5" />}
+                                </button>
+
+                                <button onClick={playNext} className="text-gray-400 hover:text-white hidden sm:block">
+                                    <FiSkipForward size={20} />
+                                </button>
+                            </div>
+
+                            <div className="flex items-center gap-4 border-l border-white/10 pl-4 ml-2" onClick={(e) => e.stopPropagation()}>
+                                <div className="hidden sm:flex items-center gap-2 group">
+                                    <FiVolume2 size={18} className="text-gray-400" />
+                                    <input
+                                        type="range"
+                                        min="0"
+                                        max="1"
+                                        step="0.01"
+                                        value={volume}
+                                        onChange={handleVolumeChange}
+                                        className="w-20 h-1 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-cyan-400"
+                                    />
+                                </div>
+
                                 <button
                                     onClick={() => setIsQueueOpen(true)}
                                     className="p-2 text-gray-400 hover:text-white hover:bg-white/10 rounded-full transition"
@@ -124,10 +157,6 @@ export const PlayerContainer = () => {
     );
 };
 
-
-function formatTime(seconds: number) {
-    if (!seconds || isNaN(seconds)) return "0:00";
-    const m = Math.floor(seconds / 60);
-    const s = Math.floor(seconds % 60);
-    return `${m}:${s < 10 ? '0' : ''}${s}`;
+function formatTime(curr: number): import("react").SetStateAction<string> {
+    throw new Error('Function not implemented.');
 }

@@ -4,6 +4,8 @@ import { useEffect, useState, useRef } from 'react';
 import { usePlayerStore } from '../store/usePlayerStore';
 import { audioController } from '../lib/audioController';
 import { FullPlayer } from './FullPlayer';
+import { FiList } from 'react-icons/fi';
+import { QueueDrawer } from './QueueDrawer';
 import { Visualizer } from './Visualizer';
 import { FiPlay, FiPause, FiSkipBack, FiSkipForward, FiVolume2 } from 'react-icons/fi';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -24,6 +26,7 @@ export const PlayerContainer = () => {
     const [currentTime, setCurrentTime] = useState("0:00");
     const [duration, setDuration] = useState("0:00");
     const [isExpanded, setIsExpanded] = useState(false);
+    const [isQueueOpen, setIsQueueOpen] = useState(false);
 
     useEffect(() => {
         setHasMounted(true);
@@ -75,39 +78,49 @@ export const PlayerContainer = () => {
     if (!activeTrack) return null;
 
     return (
-        <AnimatePresence>
-            {isExpanded ? (
-                <FullPlayer key="full-player" onClose={() => setIsExpanded(false)} />
-            ) : (
-                <motion.div
-                    layoutId="player-container"
-                    className="fixed bottom-0 left-0 right-0 z-50 p-2 sm:p-4 cursor-pointer"
-                    onClick={() => setIsExpanded(true)}
-                    initial={{ y: 100 }}
-                    animate={{ y: 0 }}
-                    exit={{ y: 100 }}
-                >
-                    <div className="mx-auto max-w-5xl bg-slate-900/90 backdrop-blur-md border border-white/10 rounded-xl shadow-2xl overflow-hidden flex items-center p-3 pr-6 gap-4">
-                        <motion.img
-                            layoutId="album-art"
-                            src={activeTrack.coverUrl}
-                            className="w-12 h-12 rounded-md object-cover"
-                        />
+        <>
+            <AnimatePresence>
+                {isExpanded ? (
+                    <FullPlayer key="full-player" onClose={() => setIsExpanded(false)} />
+                ) : (
+                    <motion.div
+                        layoutId="player-container"
+                        className="fixed bottom-0 left-0 right-0 z-50 p-2 sm:p-4 cursor-pointer"
+                        onClick={() => setIsExpanded(true)}
+                        initial={{ y: 100 }}
+                        animate={{ y: 0 }}
+                        exit={{ y: 100 }}
+                    >
+                        <div className="mx-auto max-w-5xl bg-slate-900/90 backdrop-blur-md border border-white/10 rounded-xl shadow-2xl overflow-hidden flex items-center p-3 pr-6 gap-4">
+                            <motion.img
+                                layoutId="album-art"
+                                src={activeTrack.coverUrl}
+                                className="w-12 h-12 rounded-md object-cover"
+                            />
 
-                        <div className="flex-1 overflow-hidden">
-                            <motion.h3 layoutId="track-title" className="font-bold text-white truncate text-sm">{activeTrack.title}</motion.h3>
-                            <motion.p layoutId="track-artist" className="text-xs text-gray-400 truncate">{activeTrack.artist}</motion.p>
-                        </div>
+                            <div className="flex-1 overflow-hidden">
+                                <motion.h3 layoutId="track-title" className="font-bold text-white truncate text-sm">{activeTrack.title}</motion.h3>
+                                <motion.p layoutId="track-artist" className="text-xs text-gray-400 truncate">{activeTrack.artist}</motion.p>
+                            </div>
 
-                        <div className="flex items-center gap-4" onClick={(e) => e.stopPropagation()}>
-                            <button onClick={togglePlay} className="w-10 h-10 bg-white text-black rounded-full flex items-center justify-center">
-                                {isPlaying ? <FiPause size={20} /> : <FiPlay size={20} ml-1 />}
-                            </button>
+                            <div className="flex items-center gap-4" onClick={(e) => e.stopPropagation()}>
+                                <button onClick={togglePlay} className="w-10 h-10 bg-white text-black rounded-full flex items-center justify-center">
+                                    {isPlaying ? <FiPause size={20} /> : <FiPlay size={20} ml-1 />}
+                                </button>
+                                <button
+                                    onClick={() => setIsQueueOpen(true)}
+                                    className="p-2 text-gray-400 hover:text-white hover:bg-white/10 rounded-full transition"
+                                    title="Open Queue"
+                                >
+                                    <FiList size={20} />
+                                </button>
+                            </div>
                         </div>
-                    </div>
-                </motion.div>
-            )}
-        </AnimatePresence>
+                    </motion.div>
+                )}
+            </AnimatePresence>
+            <QueueDrawer isOpen={isQueueOpen} onClose={() => setIsQueueOpen(false)} />
+        </>
     );
 };
 

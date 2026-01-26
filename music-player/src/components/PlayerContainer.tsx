@@ -5,7 +5,7 @@ import { usePlayerStore } from '../store/usePlayerStore';
 import { audioController } from '../lib/audioController';
 import { FullPlayer } from './FullPlayer';
 import { QueueDrawer } from './QueueDrawer';
-import { FiPlay, FiPause, FiSkipBack, FiSkipForward, FiList, FiUpload } from 'react-icons/fi';
+import { FiPlay, FiPause, FiSkipBack, FiSkipForward, FiList, FiUpload, FiShuffle, FiRepeat, FiVolume2, FiVolumeX } from 'react-icons/fi';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const formatTime = (time: number): string => {
@@ -20,10 +20,14 @@ export const PlayerContainer = () => {
         activeTrack,
         isPlaying,
         volume,
+        isShuffling,
+        repeatMode,
         togglePlay,
         playNext,
         playPrev,
         setVolume,
+        toggleShuffle,
+        toggleRepeat,
         importLocalTrack
     } = usePlayerStore();
 
@@ -37,6 +41,7 @@ export const PlayerContainer = () => {
 
     useEffect(() => {
         setHasMounted(true);
+        audioController.setVolume(volume);
     }, []);
 
     useEffect(() => {
@@ -78,7 +83,7 @@ export const PlayerContainer = () => {
     const handleVolumeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const newVol = parseFloat(e.target.value);
         setVolume(newVol);
-        // (audioController as any).audio.volume = newVol;
+        audioController.setVolume(newVol);
     };
 
     const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -164,12 +169,40 @@ export const PlayerContainer = () => {
                                 </button>
 
                                 <button
-                                    onClick={() => setIsQueueOpen(true)}
-                                    className="p-2 text-gray-400 hover:text-white"
+                                    onClick={toggleRepeat}
+                                    className={`hidden sm:block p-2 ${repeatMode !== 'none' ? 'text-cyan-400' : 'text-gray-400 hover:text-white'}`}
+                                    title="Repeat"
                                 >
+                                    <FiRepeat size={18} />
+                                    {repeatMode === 'one' && <span className="absolute text-[8px] -mt-2 ml-2 font-bold">1</span>}
+                                </button>
+                            </div>
+                            
+                            <div className="flex items-center gap-3 w-1/4 justify-end" onClick={(e) => e.stopPropagation()}>
+                                {/* Volume Slider */}
+                                <div className="hidden md:flex items-center gap-2 group">
+                                    <button onClick={() => { setVolume(volume === 0 ? 1 : 0); audioController.setVolume(volume === 0 ? 1 : 0); }}>
+                                        {volume === 0 ? <FiVolumeX size={18} className="text-gray-400" /> : <FiVolume2 size={18} className="text-gray-400" />}
+                                    </button>
+                                    <input
+                                        type="range" min="0" max="1" step="0.05" value={volume}
+                                        onChange={handleVolumeChange}
+                                        className="w-20 h-1 bg-gray-600 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-3 [&::-webkit-slider-thumb]:h-3 [&::-webkit-slider-thumb]:bg-white [&::-webkit-slider-thumb]:rounded-full"
+                                    />
+                                </div>
+
+                                <div className="h-6 w-px bg-white/10 mx-1"></div>
+
+                                <input type="file" accept="audio/*" className="hidden" ref={fileInputRef} onChange={handleFileUpload} />
+                                <button onClick={() => fileInputRef.current?.click()} className="text-gray-400 hover:text-cyan-400 p-2" title="Import Local File">
+                                    <FiUpload size={18} />
+                                </button>
+
+                                <button onClick={() => setIsQueueOpen(true)} className="p-2 text-gray-400 hover:text-white">
                                     <FiList size={20} />
                                 </button>
-                            </div>                        </div>
+                            </div>
+                        </div>
                     </motion.div>
                 )}
             </AnimatePresence>

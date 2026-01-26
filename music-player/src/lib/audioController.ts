@@ -92,6 +92,12 @@ class AudioController {
         this.setPlaybackState('paused');
     }
 
+    public setVolume(volume: number) {
+        if (this.audio) {
+            this.audio.volume = Math.max(0, Math.min(1, volume));
+        }
+    }
+
     /**
      * seekTo
      * @param time - Time in seconds

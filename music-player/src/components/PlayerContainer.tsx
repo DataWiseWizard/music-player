@@ -5,8 +5,15 @@ import { usePlayerStore } from '../store/usePlayerStore';
 import { audioController } from '../lib/audioController';
 import { FullPlayer } from './FullPlayer';
 import { QueueDrawer } from './QueueDrawer';
-import { FiPlay, FiPause, FiSkipBack, FiSkipForward, FiVolume2, FiList, FiUpload } from 'react-icons/fi';
+import { FiPlay, FiPause, FiSkipBack, FiSkipForward, FiList, FiUpload } from 'react-icons/fi';
 import { motion, AnimatePresence } from 'framer-motion';
+
+const formatTime = (time: number): string => {
+    if (!time || isNaN(time)) return "0:00";
+    const minutes = Math.floor(time / 60);
+    const seconds = Math.floor(time % 60);
+    return `${minutes}:${seconds.toString().padStart(2, '0')}`;
+};
 
 export const PlayerContainer = () => {
     const {
@@ -16,11 +23,14 @@ export const PlayerContainer = () => {
         togglePlay,
         playNext,
         playPrev,
-        setVolume
+        setVolume,
+        importLocalTrack
     } = usePlayerStore();
 
     const [hasMounted, setHasMounted] = useState(false);
     const [progress, setProgress] = useState(0); // 0 to 100
+    const [currentTime, setCurrentTime] = useState("0:00");
+    const [duration, setDuration] = useState("0:00");
     const [isExpanded, setIsExpanded] = useState(false);
     const [isQueueOpen, setIsQueueOpen] = useState(false);
     const fileInputRef = useRef<HTMLInputElement>(null);
@@ -68,7 +78,7 @@ export const PlayerContainer = () => {
     const handleVolumeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const newVol = parseFloat(e.target.value);
         setVolume(newVol);
-        (audioController as any).audio.volume = newVol;
+        // (audioController as any).audio.volume = newVol;
     };
 
     const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -168,18 +178,4 @@ export const PlayerContainer = () => {
     );
 };
 
-function formatTime(curr: number): import("react").SetStateAction<string> {
-    throw new Error('Function not implemented.');
-}
-function importLocalTrack(file: File) {
-    throw new Error('Function not implemented.');
-}
-
-function setDuration(arg0: SetStateAction<string>) {
-    throw new Error('Function not implemented.');
-}
-
-function setCurrentTime(arg0: SetStateAction<string>) {
-    throw new Error('Function not implemented.');
-}
 

@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
-import { audioController } from '@/lib/audioController';
+import { audioController } from '../lib/audioController';
 
 export interface Track {
     id: string;

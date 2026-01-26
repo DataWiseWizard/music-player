@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 import { usePlayerStore, Track } from "../store/usePlayerStore";
-import { FiHeart, FiPlay, FiPlus, FiMusic, FiFolder, FiMoreHorizontal } from "react-icons/fi";
+import { FiHeart, FiPlay, FiPlus, FiMusic, FiFolder } from "react-icons/fi";
 import { motion } from "framer-motion";
 
 const DISCOVERY_TRACKS: Track[] = [

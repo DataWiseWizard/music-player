@@ -186,11 +186,33 @@ export const usePlayerStore = create<PlayerState>()(
                     isLocal: true
                 };
 
-                const { queue } = get();
-                // Add to front of queue and play
-                set({ queue: [newTrack, ...queue], activeTrack: newTrack, isPlaying: true });
-                audioController.setSource(url);
-                audioController.play();
+                const { playlists } = get();
+
+                // 1. Find existing "Local Files" playlist or create one
+                let localPlaylist = playlists.find(p => p.name === 'Local Files');
+
+                // We use an updater function inside set() to ensure we are working with the latest state
+                set(state => {
+                    let updatedPlaylists = [...state.playlists];
+                    let targetPlaylistId = localPlaylist?.id;
+
+                    if (!localPlaylist) {
+                        const newPlaylist = {
+                            id: 'local-files', // Static ID helps identify it easily
+                            name: 'Local Files',
+                            tracks: [newTrack]
+                        };
+                        updatedPlaylists = [newPlaylist, ...updatedPlaylists];
+                    } else {
+                        updatedPlaylists = updatedPlaylists.map(p =>
+                            p.id === targetPlaylistId
+                                ? { ...p, tracks: [newTrack, ...p.tracks] } // Add to top of folder
+                                : p
+                        );
+                    }
+
+                    return { playlists: updatedPlaylists };
+                });
             }
         }),
         {

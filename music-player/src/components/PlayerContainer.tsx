@@ -111,6 +111,7 @@ export const PlayerContainer = () => {
             </div>
         );
     }
+    
     return (
         <>
             <AnimatePresence>
@@ -179,7 +180,6 @@ export const PlayerContainer = () => {
                             </div>
                             
                             <div className="flex items-center gap-3 w-1/4 justify-end" onClick={(e) => e.stopPropagation()}>
-                                {/* Volume Slider */}
                                 <div className="hidden md:flex items-center gap-2 group">
                                     <button onClick={() => { setVolume(volume === 0 ? 1 : 0); audioController.setVolume(volume === 0 ? 1 : 0); }}>
                                         {volume === 0 ? <FiVolumeX size={18} className="text-gray-400" /> : <FiVolume2 size={18} className="text-gray-400" />}

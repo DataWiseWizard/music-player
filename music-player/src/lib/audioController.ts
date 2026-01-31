@@ -17,10 +17,6 @@ class AudioController {
         }
     }
 
-    /**
-     * Lazily initializes the AudioContext.
-     * Must be called in response to a user gesture (e.g., Play button click).
-     */
     public initAudioContext() {
         if (!this.context && typeof window !== 'undefined') {
             const AudioContextClass = window.AudioContext || (window as any).webkitAudioContext;
@@ -107,19 +103,10 @@ class AudioController {
         this.audio.currentTime = time;
     }
 
-    /**
-     * Expose the AnalyserNode for the Visualizer component.
-     * This allows the Visualizer to read frequency data directly without
-     * passing it through React state. [cite: 92, 162]
-     */
     public getAnalyser(): AnalyserNode | null {
         return this.analyser;
     }
 
-    /**
-     * Attach event listeners to the underlying Audio element.
-     * This allows the Zustand store to subscribe to audio events.
-     */
     public on(event: string, callback: EventListenerOrEventListenerObject) {
         if (this.audio) {
             this.audio.addEventListener(event, callback);

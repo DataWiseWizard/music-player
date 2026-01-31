@@ -9,7 +9,7 @@ const DISCOVERY_TRACKS: Track[] = [
         id: '1',
         title: 'Ambient Piano',
         artist: 'Relaxing Sounds',
-        url: '/music/SoundHelix-Song-1.mp3', // Using the proxy path
+        url: '/music/SoundHelix-Song-1.mp3',
         coverUrl: 'https://images.unsplash.com/photo-1511379938547-c1f69419868d?w=400&q=80',
     },
     {
@@ -63,7 +63,7 @@ export default function LibraryDashboard() {
                         className="group flex items-center gap-4 p-3 rounded-xl hover:bg-white/5 transition border border-transparent hover:border-white/5"
                     >
                         <div className="relative w-12 h-12 flex-shrink-0 cursor-pointer" onClick={() => {
-                            store.setQueue(tracks); // Set context queue
+                            store.setQueue(tracks);
                             store.playTrack(track);
                         }}>
                             <img src={track.coverUrl} className="w-full h-full rounded-md object-cover" />
